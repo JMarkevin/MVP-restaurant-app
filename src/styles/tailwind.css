@@ -1,0 +1,344 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Tailwind components */
+@layer components {
+  /* Button variants */
+  .btn-primary {
+    @apply bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+
+  .btn-outline {
+    @apply border border-gray-300 hover:border-gray-400 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden;
+  }
+
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-1;
+  }
+
+  /* Input styles */
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent;
+  }
+
+  /* Badge styles */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .badge-warning {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  .badge-error {
+    @apply bg-red-100 text-red-800;
+  }
+
+  .badge-info {
+    @apply bg-blue-100 text-blue-800;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    @apply animate-spin rounded-full border-2 border-gray-300 border-t-orange-500;
+  }
+
+  /* Modal backdrop */
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+  }
+
+  /* Modal content */
+  .modal-content {
+    @apply bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto;
+  }
+
+  /* Restaurant card specific styles */
+  .restaurant-card {
+    @apply bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200;
+  }
+
+  .restaurant-card-image {
+    @apply w-full h-48 object-cover;
+  }
+
+  .restaurant-card-content {
+    @apply p-4;
+  }
+
+  .restaurant-card-title {
+    @apply text-lg font-semibold text-gray-900 mb-2;
+  }
+
+  .restaurant-card-location {
+    @apply flex items-center text-gray-600 mb-2;
+  }
+
+  .restaurant-card-stats {
+    @apply flex items-center justify-between text-sm text-gray-500 mb-3;
+  }
+
+  /* Menu item styles */
+  .menu-item {
+    @apply border rounded-lg p-4 flex items-center space-x-3 hover:bg-gray-50 transition-colors duration-200;
+  }
+
+  .menu-item-image {
+    @apply w-16 h-16 object-cover rounded-lg;
+  }
+
+  .menu-item-content {
+    @apply flex-1;
+  }
+
+  .menu-item-name {
+    @apply font-medium text-gray-900;
+  }
+
+  .menu-item-description {
+    @apply text-sm text-gray-500;
+  }
+
+  .menu-item-price {
+    @apply text-sm font-semibold text-orange-600;
+  }
+
+  /* Cart styles */
+  .cart-item {
+    @apply flex items-center justify-between p-4 border-b border-gray-200;
+  }
+
+  .cart-item-content {
+    @apply flex items-center space-x-3;
+  }
+
+  .cart-item-details {
+    @apply flex-1;
+  }
+
+  .cart-item-name {
+    @apply font-medium text-gray-900;
+  }
+
+  .cart-item-price {
+    @apply text-sm text-gray-500;
+  }
+
+  .cart-item-quantity {
+    @apply flex items-center space-x-2;
+  }
+
+  .quantity-button {
+    @apply w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors duration-200;
+  }
+
+  .quantity-input {
+    @apply w-12 text-center border border-gray-300 rounded px-2 py-1;
+  }
+
+  /* Order status styles */
+  .order-status {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .order-status-pending {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  .order-status-confirmed {
+    @apply bg-blue-100 text-blue-800;
+  }
+
+  .order-status-preparing {
+    @apply bg-orange-100 text-orange-800;
+  }
+
+  .order-status-ready {
+    @apply bg-purple-100 text-purple-800;
+  }
+
+  .order-status-delivered {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .order-status-cancelled {
+    @apply bg-red-100 text-red-800;
+  }
+
+  /* Rating styles */
+  .rating-stars {
+    @apply flex items-center space-x-1;
+  }
+
+  .star {
+    @apply w-4 h-4 text-yellow-400;
+  }
+
+  .star-filled {
+    @apply fill-current;
+  }
+
+  .star-empty {
+    @apply text-gray-300;
+  }
+
+  /* Figma Design System */
+  .font-nunito {
+    font-family: 'Nunito', sans-serif;
+  }
+
+  /* Custom spacing for Figma layout */
+  .px-30 {
+    padding-left: 7.5rem; /* 120px */
+    padding-right: 7.5rem;
+  }
+
+  .py-5 {
+    padding-top: 1.25rem; /* 20px */
+    padding-bottom: 1.25rem;
+  }
+
+  .w-40 {
+    width: 10rem; /* 160px */
+  }
+
+  .h-25 {
+    height: 6.25rem; /* 100px */
+  }
+
+  .w-30 {
+    width: 7.5rem; /* 120px */
+  }
+
+  .h-30 {
+    height: 7.5rem; /* 120px */
+  }
+
+  /* Hero section specific styles */
+  .hero-height {
+    height: 51.6875rem; /* 827px */
+  }
+
+  .hero-gradient {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) -59.98%,
+      rgba(0, 0, 0, 0.8) 110.09%
+    );
+  }
+
+  /* Text styles matching Figma */
+  .text-display-2xl {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 3rem; /* 48px */
+    line-height: 3.75rem; /* 60px */
+  }
+
+  .text-display-xs {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem; /* 24px */
+    line-height: 2.25rem; /* 36px */
+  }
+
+  .text-display-md {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 2rem; /* 32px */
+    line-height: 2.625rem; /* 42px */
+  }
+
+  .text-lg-bold {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 1.125rem; /* 18px */
+    line-height: 2rem; /* 32px */
+    letter-spacing: -0.03em;
+  }
+
+  .text-md-regular {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 400;
+    font-size: 1rem; /* 16px */
+    line-height: 1.875rem; /* 30px */
+    letter-spacing: -0.02em;
+  }
+
+  .text-md-medium {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 500;
+    font-size: 1rem; /* 16px */
+    line-height: 1.875rem; /* 30px */
+    letter-spacing: -0.03em;
+  }
+
+  .text-md-bold {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 1rem; /* 16px */
+    line-height: 1.875rem; /* 30px */
+    letter-spacing: -0.02em;
+  }
+
+  .text-md-extrabold {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem; /* 16px */
+    line-height: 1.875rem; /* 30px */
+  }
+
+  /* Card shadows matching Figma */
+  .shadow-card {
+    box-shadow: 0px 0px 20px rgba(203, 202, 202, 0.25);
+  }
+}
+
+/* Custom utilities for navbar Figma specs */
+@layer utilities {
+  .gap-15px {
+    gap: 15px;
+  }
+
+  .w-42px {
+    width: 42px;
+  }
+
+  .h-42px {
+    height: 42px;
+  }
+
+  .text-32px {
+    font-size: 32px;
+  }
+
+  .leading-42px {
+    line-height: 42px;
+  }
+
+  .gap-16px {
+    gap: 16px;
+  }
+
+  .w-163px {
+    width: 163px;
+  }
+
+  .h-48px {
+    height: 48px;
+  }
+}
