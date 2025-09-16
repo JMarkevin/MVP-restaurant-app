@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 import ImageWithFallback from '@/components/ImageWithFallback';
 import type { RootState } from '@/app/store';
 import type { CartItem, Restaurant } from '@/types';
+import restaurantIcon from '@/assets/logos/restaurant-icon.png';
 
 const MyCartPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -198,7 +199,7 @@ const MyCartPage: React.FC = () => {
                   {/* Restaurant Logo - Rectangle */}
                   <div className='w-8 h-8 flex-shrink-0'>
                     <ImageWithFallback
-                      src={'/src/assets/logos/restaurant-icon.png'}
+                      src={restaurantIcon}
                       alt={group.restaurantName}
                       className='w-full h-full object-cover rounded'
                       fallbackText='R'
@@ -342,7 +343,7 @@ const MyCartPage: React.FC = () => {
                   onClick={() => navigate(`/restaurants/${group.restaurantId}`)}
                 >
                   <img
-                    src='/src/assets/logos/restaurant-icon.png'
+                    src={restaurantIcon}
                     alt={group.restaurantName}
                     className='w-8 h-8 object-contain'
                     onError={(e) => {

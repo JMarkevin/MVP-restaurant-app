@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { X, Loader2, Eye, EyeOff } from 'lucide-react';
+import leftImageModal from '@/assets/images/leftimage-modal.png';
+import restaurantPlaceholder from '@/assets/images/restaurant-placeholder.jpg';
+import redLogo from '@/assets/logos/red-logo.png';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -195,12 +198,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
         {/* Left Side - Food Image - Hidden on mobile */}
         <div className='hidden md:block absolute left-0 top-0 w-1/2 h-full'>
           <img
-            src='/src/assets/images/leftimage-modal.png'
+            src={leftImageModal}
             alt='Food'
             className='w-full h-full object-cover'
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.src = '/src/assets/images/restaurant-placeholder.jpg';
+              target.src = restaurantPlaceholder;
             }}
           />
         </div>
@@ -221,7 +224,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
             {/* Logo */}
             <div className='flex items-center gap-[11.43px]'>
               <img
-                src='/src/assets/logos/red-logo.png'
+                src={redLogo}
                 alt='Foody Logo'
                 className='w-8 h-8 md:w-10 md:h-10'
                 onError={(e) => {

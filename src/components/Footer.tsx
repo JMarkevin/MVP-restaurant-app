@@ -1,4 +1,9 @@
 import React from 'react';
+import redLogo from '@/assets/logos/red-logo.png';
+import facebookIcon from '@/assets/logos/facebook-icon.svg';
+import instagramIcon from '@/assets/logos/instagram-icon.svg';
+import linkedinIcon from '@/assets/logos/linkedin-icon.svg';
+import tiktokIcon from '@/assets/logos/tiktok-icon.svg';
 
 interface FooterProps {
   onCategoryClick?: (category: string) => void;
@@ -17,7 +22,7 @@ const Footer: React.FC<FooterProps> = ({
           <div className='space-y-6 md:space-y-10'>
             <div className='flex items-center gap-4'>
               <img
-                src='/src/assets/logos/red-logo.png'
+                src={redLogo}
                 alt='Foody Logo'
                 className='w-10 h-10 md:w-10 md:h-10'
               />
@@ -44,7 +49,7 @@ const Footer: React.FC<FooterProps> = ({
                   className='w-10 h-10 border border-[#252B37] rounded-full flex items-center justify-center hover:bg-gray-800 cursor-pointer transition-colors'
                 >
                   <img
-                    src='/src/assets/logos/facebook-icon.svg'
+                    src={facebookIcon}
                     alt='Facebook'
                     className='w-5 h-5'
                     onError={(e) => {
@@ -62,7 +67,7 @@ const Footer: React.FC<FooterProps> = ({
                   className='w-10 h-10 border border-[#252B37] rounded-full flex items-center justify-center hover:bg-gray-800 cursor-pointer transition-colors'
                 >
                   <img
-                    src='/src/assets/logos/instagram-icon.svg'
+                    src={instagramIcon}
                     alt='Instagram'
                     className='w-5 h-5'
                     onError={(e) => {
@@ -80,7 +85,7 @@ const Footer: React.FC<FooterProps> = ({
                   className='w-10 h-10 border border-[#252B37] rounded-full flex items-center justify-center hover:bg-gray-800 cursor-pointer transition-colors'
                 >
                   <img
-                    src='/src/assets/logos/linkedin-icon.svg'
+                    src={linkedinIcon}
                     alt='LinkedIn'
                     className='w-5 h-5'
                     onError={(e) => {
@@ -98,7 +103,7 @@ const Footer: React.FC<FooterProps> = ({
                   className='w-10 h-10 border border-[#252B37] rounded-full flex items-center justify-center hover:bg-gray-800 cursor-pointer transition-colors'
                 >
                   <img
-                    src='/src/assets/logos/tiktok-icon.svg'
+                    src={tiktokIcon}
                     alt='TikTok'
                     className='w-5 h-5'
                     onError={(e) => {

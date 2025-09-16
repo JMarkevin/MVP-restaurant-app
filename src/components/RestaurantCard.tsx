@@ -5,6 +5,7 @@ import { Card } from '@/ui/card';
 import type { Restaurant } from '@/types';
 import { getRestaurantDistance, formatDistance } from '@/utils/distance';
 import { useGeolocation } from '@/hooks/useGeolocation';
+import restaurantPlaceholder from '@/assets/images/restaurant-placeholder.jpg';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
@@ -67,10 +68,10 @@ const RestaurantCard: React.FC<RestaurantCardProps> = ({
                 '/src/assets/images/restaurant-placeholder.jpg';
             } else if (currentSrc === restaurant.logo) {
               // Try placeholder if logo fails
-              target.src = '/src/assets/images/restaurant-placeholder.jpg';
+              target.src = restaurantPlaceholder;
             } else {
               // Final fallback to placeholder
-              target.src = '/src/assets/images/restaurant-placeholder.jpg';
+              target.src = restaurantPlaceholder;
             }
           }}
         />

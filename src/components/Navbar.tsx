@@ -6,6 +6,9 @@ import { useAuth } from '@/hooks/useAuth';
 import AuthModal from './AuthModal';
 import MobileProfileSidebar from './MobileProfileSidebar';
 import { generateInitials } from '@/utils/imageUpload';
+import whiteLogo from '@/assets/logos/white-logo.png';
+import redLogo from '@/assets/logos/red-logo.png';
+import shoppingBagIcon from '@/assets/logos/shoppingbag-icon.svg';
 
 const Navbar: React.FC = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -99,11 +102,7 @@ const Navbar: React.FC = () => {
         >
           {/* Logo */}
           <img
-            src={
-              location.pathname === '/' && !isScrolled
-                ? '/src/assets/logos/white-logo.png'
-                : '/src/assets/logos/red-logo.png'
-            }
+            src={location.pathname === '/' && !isScrolled ? whiteLogo : redLogo}
             alt='Foody Logo'
             className='w-10 h-10 md:w-[clamp(32px,4vw,42px)] md:h-[clamp(32px,4vw,42px)] flex-none order-0 flex-grow-0'
           />
@@ -131,7 +130,7 @@ const Navbar: React.FC = () => {
                 className='w-7 h-7 md:w-8 md:h-8 flex-none order-0 flex-grow-0 bg-transparent border-none cursor-pointer relative'
               >
                 <img
-                  src='/src/assets/logos/shoppingbag-icon.svg'
+                  src={shoppingBagIcon}
                   alt='Shopping Cart'
                   className={`w-7 h-7 md:w-8 md:h-8 ${
                     location.pathname === '/' && !isScrolled

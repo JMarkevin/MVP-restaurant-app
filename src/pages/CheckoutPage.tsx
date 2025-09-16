@@ -11,6 +11,12 @@ import { cartApi } from '@/services/api/cart';
 import Footer from '@/components/Footer';
 import type { RootState } from '@/app/store';
 import type { CartItem } from '@/types';
+import locationLogo from '@/assets/logos/location-logo.png';
+import restaurantIcon from '@/assets/logos/restaurant-icon.png';
+import bniLogo from '@/assets/logos/bni.svg';
+import briLogo from '@/assets/logos/bri.svg';
+import bcaLogo from '@/assets/logos/bca.svg';
+import mandiriLogo from '@/assets/logos/mandiri.svg';
 
 const CheckoutPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -269,7 +275,7 @@ const CheckoutPage: React.FC = () => {
                     {/* Rectangle - Location Icon */}
                     <div className='w-6 h-6 flex-shrink-0'>
                       <img
-                        src='/src/assets/logos/location-logo.png'
+                        src={locationLogo}
                         alt='Location'
                         className='w-full h-full object-contain'
                         onError={(e) => {
@@ -354,7 +360,7 @@ const CheckoutPage: React.FC = () => {
                       {/* Rectangle - Restaurant Logo */}
                       <div className='w-8 h-8 flex-shrink-0'>
                         <img
-                          src='/src/assets/logos/restaurant-icon.png'
+                          src={restaurantIcon}
                           alt={group.restaurantName}
                           className='w-full h-full object-cover rounded'
                           onError={(e) => {
@@ -499,7 +505,7 @@ const CheckoutPage: React.FC = () => {
                     >
                       <div className='w-10 h-10 border border-[#D5D7DA] rounded-lg flex items-center justify-center p-2 flex-shrink-0'>
                         <img
-                          src='/src/assets/logos/bni.svg'
+                          src={bniLogo}
                           alt='BNI'
                           className='w-full h-full object-contain'
                           onError={(e) => {
@@ -539,7 +545,7 @@ const CheckoutPage: React.FC = () => {
                     >
                       <div className='w-10 h-10 border border-[#D5D7DA] rounded-lg flex items-center justify-center p-2 flex-shrink-0'>
                         <img
-                          src='/src/assets/logos/bri.svg'
+                          src={briLogo}
                           alt='BRI'
                           className='w-full h-full object-contain'
                           onError={(e) => {
@@ -579,7 +585,7 @@ const CheckoutPage: React.FC = () => {
                     >
                       <div className='w-10 h-10 border border-[#D5D7DA] rounded-lg flex items-center justify-center p-2 flex-shrink-0'>
                         <img
-                          src='/src/assets/logos/bca.svg'
+                          src={bcaLogo}
                           alt='BCA'
                           className='w-full h-full object-contain'
                           onError={(e) => {
@@ -619,7 +625,7 @@ const CheckoutPage: React.FC = () => {
                     >
                       <div className='w-10 h-10 border border-[#D5D7DA] rounded-lg flex items-center justify-center p-2 flex-shrink-0'>
                         <img
-                          src='/src/assets/logos/mandiri.svg'
+                          src={mandiriLogo}
                           alt='Mandiri'
                           className='w-full h-full object-contain'
                           onError={(e) => {
