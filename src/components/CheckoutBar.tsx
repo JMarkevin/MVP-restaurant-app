@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import type { RootState } from '@/app/store';
-import ShoppingBagIcon from '@/assets/logos/shoppingbag-icon.svg';
+import ShoppingBagIcon from '/shoppingbag-icon.svg';
 
 interface CheckoutBarProps {
   onCheckout?: () => void;

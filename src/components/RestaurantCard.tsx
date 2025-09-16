@@ -5,7 +5,7 @@ import { Card } from '@/ui/card';
 import type { Restaurant } from '@/types';
 import { getRestaurantDistance, formatDistance } from '@/utils/distance';
 import { useGeolocation } from '@/hooks/useGeolocation';
-import restaurantPlaceholder from '@/assets/images/restaurant-placeholder.jpg';
+import restaurantPlaceholder from '/restaurant-placeholder.jpg';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;

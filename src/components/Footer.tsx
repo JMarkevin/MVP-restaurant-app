@@ -1,9 +1,9 @@
 import React from 'react';
-import redLogo from '@/assets/logos/red-logo.png';
-import facebookIcon from '@/assets/logos/facebook-icon.svg';
-import instagramIcon from '@/assets/logos/instagram-icon.svg';
-import linkedinIcon from '@/assets/logos/linkedin-icon.svg';
-import tiktokIcon from '@/assets/logos/tiktok-icon.svg';
+import redLogo from '/red-logo.png';
+import facebookIcon from '/facebook-icon.svg';
+import instagramIcon from '/instagram-icon.svg';
+import linkedinIcon from '/linkedin-icon.svg';
+import tiktokIcon from '/tiktok-icon.svg';
 
 interface FooterProps {
   onCategoryClick?: (category: string) => void;

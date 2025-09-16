@@ -7,7 +7,7 @@ import { ordersApi } from '@/services/api/orders';
 import { useCreateReviewMutation } from '@/services/queries/reviews';
 import { useMenuImages } from '@/hooks/useMenuImages';
 import ReviewModal from './ReviewModal';
-import restaurantIcon from '@/assets/logos/restaurant-icon.png';
+import restaurantIcon from '/restaurant-icon.png';
 import type { RootState } from '@/app/store';
 import type { Order } from '@/features/orders/ordersSlice';
 

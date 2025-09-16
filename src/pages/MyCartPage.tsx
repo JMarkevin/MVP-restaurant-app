@@ -9,7 +9,7 @@ import Footer from '@/components/Footer';
 import ImageWithFallback from '@/components/ImageWithFallback';
 import type { RootState } from '@/app/store';
 import type { CartItem, Restaurant } from '@/types';
-import restaurantIcon from '@/assets/logos/restaurant-icon.png';
+import restaurantIcon from '/restaurant-icon.png';
 
 const MyCartPage: React.FC = () => {
   const dispatch = useDispatch();

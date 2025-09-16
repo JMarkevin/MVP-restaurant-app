@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
-import redLogo from '@/assets/logos/red-logo.png';
+import redLogo from '/red-logo.png';
 import type { CartItem } from '@/types';
 
 interface OrderData {

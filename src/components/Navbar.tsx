@@ -6,9 +6,9 @@ import { useAuth } from '@/hooks/useAuth';
 import AuthModal from './AuthModal';
 import MobileProfileSidebar from './MobileProfileSidebar';
 import { generateInitials } from '@/utils/imageUpload';
-import whiteLogo from '@/assets/logos/white-logo.png';
-import redLogo from '@/assets/logos/red-logo.png';
-import shoppingBagIcon from '@/assets/logos/shoppingbag-icon.svg';
+import whiteLogo from '/white-logo.png';
+import redLogo from '/red-logo.png';
+import shoppingBagIcon from '/shoppingbag-icon.svg';
 
 const Navbar: React.FC = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);

@@ -11,6 +11,7 @@ import { useCategoriesQuery } from '@/services/queries/categories';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { getRestaurantDistance } from '@/utils/distance';
 import type { Restaurant } from '@/types';
+import bgMainpage from '/bg-mainpage.png';
 
 const HomePage: React.FC = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -226,7 +227,7 @@ const HomePage: React.FC = () => {
         <div
           className='absolute inset-0 bg-cover bg-center bg-no-repeat'
           style={{
-            backgroundImage: 'url(/src/assets/images/bg-mainpage.png)',
+            backgroundImage: `url(${bgMainpage})`,
           }}
         />
 

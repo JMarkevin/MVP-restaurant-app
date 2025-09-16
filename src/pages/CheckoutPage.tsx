@@ -3,7 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Minus, Plus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { clearCart, updateQuantity } from '@/features/cart/cartSlice';
+import {
+  clearCart,
+  updateQuantity,
+  removeFromCart,
+} from '@/features/cart/cartSlice';
 import { addOrder } from '@/features/orders/ordersSlice';
 import { authApi } from '@/services/api/auth';
 import { ordersApi } from '@/services/api/orders';
@@ -11,12 +15,12 @@ import { cartApi } from '@/services/api/cart';
 import Footer from '@/components/Footer';
 import type { RootState } from '@/app/store';
 import type { CartItem } from '@/types';
-import locationLogo from '@/assets/logos/location-logo.png';
-import restaurantIcon from '@/assets/logos/restaurant-icon.png';
-import bniLogo from '@/assets/logos/bni.svg';
-import briLogo from '@/assets/logos/bri.svg';
-import bcaLogo from '@/assets/logos/bca.svg';
-import mandiriLogo from '@/assets/logos/mandiri.svg';
+import locationLogo from '/location-logo.png';
+import restaurantIcon from '/restaurant-icon.png';
+import bniLogo from '/bni.svg';
+import briLogo from '/bri.svg';
+import bcaLogo from '/bca.svg';
+import mandiriLogo from '/mandiri.svg';
 
 const CheckoutPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -91,7 +95,10 @@ const CheckoutPage: React.FC = () => {
     const item = cartItems.find((item) => item.id === itemId);
     if (item) {
       const newQuantity = item.quantity + change;
-      if (newQuantity > 0) {
+      if (newQuantity <= 0) {
+        // Remove item if quantity becomes 0 or negative
+        dispatch(removeFromCart(itemId));
+      } else {
         dispatch(updateQuantity({ id: itemId, quantity: newQuantity }));
       }
     }
@@ -449,7 +456,8 @@ const CheckoutPage: React.FC = () => {
                           {/* Minus Button - Frame 19 */}
                           <button
                             onClick={() => handleQuantityChange(item.id, -1)}
-                            className='flex flex-row justify-center items-center p-1.5 md:p-[6.5px] gap-1.5 md:gap-[6.5px] w-7 h-7 md:w-9 md:h-9 border border-[#D5D7DA] rounded-full hover:bg-gray-50 transition-colors'
+                            className='flex flex-row justify-center items-center p-2 md:p-[6.5px] gap-1.5 md:gap-[6.5px] w-8 h-8 md:w-9 md:h-9 border border-[#D5D7DA] rounded-full hover:bg-gray-50 transition-colors touch-manipulation'
+                            type='button'
                           >
                             <Minus className='w-4 h-4 md:w-[19.5px] md:h-[19.5px] text-[#0A0D12]' />
                           </button>
@@ -462,7 +470,8 @@ const CheckoutPage: React.FC = () => {
                           {/* Plus Button - Frame 18 */}
                           <button
                             onClick={() => handleQuantityChange(item.id, 1)}
-                            className='flex flex-row items-center p-1.5 md:p-[6.5px] gap-1.5 md:gap-[6.5px] w-7 h-7 md:w-9 md:h-9 bg-[#C12116] rounded-full hover:bg-[#B01E14] transition-colors'
+                            className='flex flex-row items-center p-2 md:p-[6.5px] gap-1.5 md:gap-[6.5px] w-8 h-8 md:w-9 md:h-9 bg-[#C12116] rounded-full hover:bg-[#B01E14] transition-colors touch-manipulation'
+                            type='button'
                           >
                             <Plus className='w-4 h-4 md:w-[19.5px] md:h-[19.5px] text-white' />
                           </button>

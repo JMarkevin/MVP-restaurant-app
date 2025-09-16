@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { X, Loader2, Eye, EyeOff } from 'lucide-react';
-import leftImageModal from '@/assets/images/leftimage-modal.png';
-import restaurantPlaceholder from '@/assets/images/restaurant-placeholder.jpg';
-import redLogo from '@/assets/logos/red-logo.png';
+import leftImageModal from '/leftimage-modal.png';
+import restaurantPlaceholder from '/restaurant-placeholder.jpg';
+import redLogo from '/red-logo.png';
 
 interface AuthModalProps {
   isOpen: boolean;

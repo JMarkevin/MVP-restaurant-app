@@ -1,5 +1,11 @@
 import { apiClient } from './axios';
 import type { Category, ApiResponse } from '@/types';
+import allRestaurantLogo from '/allrestaurant-logo.png';
+import locationLogo from '/location-logo.png';
+import discountLogo from '/discount-logo.png';
+import bestsellerLogo from '/bestseller-logo.png';
+import deliveryLogo from '/delivery-logo.png';
+import lunchLogo from '/lunch-logo.png';
 
 export const categoriesApi = {
   getCategories: async (): Promise<Category[]> => {
@@ -15,37 +21,37 @@ export const categoriesApi = {
         {
           id: 'all',
           name: 'All Restaurant',
-          icon: '/src/assets/logos/allrestaurant-logo.png',
+          icon: allRestaurantLogo,
           filter: null,
         },
         {
           id: 'nearby',
           name: 'Nearby',
-          icon: '/src/assets/logos/location-logo.png',
+          icon: locationLogo,
           filter: 'nearby',
         },
         {
           id: 'discount',
           name: 'Discount',
-          icon: '/src/assets/logos/discount-logo.png',
+          icon: discountLogo,
           filter: 'discount',
         },
         {
           id: 'bestseller',
           name: 'Best Seller',
-          icon: '/src/assets/logos/bestseller-logo.png',
+          icon: bestsellerLogo,
           filter: 'bestseller',
         },
         {
           id: 'delivery',
           name: 'Delivery',
-          icon: '/src/assets/logos/delivery-logo.png',
+          icon: deliveryLogo,
           filter: 'delivery',
         },
         {
           id: 'lunch',
           name: 'Lunch',
-          icon: '/src/assets/logos/lunch-logo.png',
+          icon: lunchLogo,
           filter: 'lunch',
         },
       ];
