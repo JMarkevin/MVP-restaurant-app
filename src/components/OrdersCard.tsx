@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { ordersApi } from '@/services/api/orders';
 import { useCreateReviewMutation } from '@/services/queries/reviews';
 import { useMenuImages } from '@/hooks/useMenuImages';
+import { useAuth } from '@/hooks/useAuth';
 import ReviewModal from './ReviewModal';
 import restaurantIcon from '/restaurant-icon.png';
 import type { RootState } from '@/app/store';
@@ -13,6 +14,7 @@ import type { Order } from '@/features/orders/ordersSlice';
 
 const OrdersCard = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [statusFilter, setStatusFilter] = useState<string>('done');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
@@ -42,6 +44,15 @@ const OrdersCard = () => {
     queryFn: () =>
       ordersApi.getMyOrders(statusFilter === 'done' ? undefined : statusFilter),
     staleTime: 30000, // 30 seconds
+    enabled: isAuthenticated, // Only fetch when user is authenticated
+    retry: (failureCount, error) => {
+      // Don't retry on 401 errors to prevent loops
+      const axiosError = error as { response?: { status?: number } };
+      if (axiosError?.response?.status === 401) {
+        return false;
+      }
+      return failureCount < 2;
+    },
   });
 
   // Use the menu images hook
@@ -129,7 +140,6 @@ const OrdersCard = () => {
         alert('Unable to submit review: Missing transaction ID');
         return;
       }
-
 
       const reviewData = {
         transactionId: transactionId,

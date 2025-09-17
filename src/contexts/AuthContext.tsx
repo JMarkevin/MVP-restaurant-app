@@ -88,9 +88,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     setUser(response.data.user);
     setIsAuthenticated(true);
-    queryClient.invalidateQueries({ queryKey: ['userProfile'] });
-    queryClient.invalidateQueries({ queryKey: ['cart'] }); // Invalidate cart on login
-    queryClient.invalidateQueries({ queryKey: ['orders'] }); // Invalidate orders on login
+
+    // Add a small delay before invalidating queries to ensure token is properly set
+    setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['cart'] }); // Invalidate cart on login
+      queryClient.invalidateQueries({ queryKey: ['orders'] }); // Invalidate orders on login
+    }, 100);
   };
 
   const register = async (userData: RegisterRequest) => {
@@ -99,9 +103,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.setItem('token', response.data.token);
     setUser(response.data.user);
     setIsAuthenticated(true);
-    queryClient.invalidateQueries({ queryKey: ['userProfile'] });
-    queryClient.invalidateQueries({ queryKey: ['cart'] }); // Invalidate cart on register
-    queryClient.invalidateQueries({ queryKey: ['orders'] }); // Invalidate orders on register
+
+    // Add a small delay before invalidating queries to ensure token is properly set
+    setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['cart'] }); // Invalidate cart on register
+      queryClient.invalidateQueries({ queryKey: ['orders'] }); // Invalidate orders on register
+    }, 100);
   };
 
   const logout = () => {

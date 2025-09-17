@@ -11,6 +11,7 @@ import { useGeolocation } from '@/hooks/useGeolocation';
 import { getRestaurantDistance, formatDistance } from '@/utils/distance';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem, removeItem, updateQuantity } from '@/features/cart/cartSlice';
+import { useAuth } from '@/hooks/useAuth';
 import type { RootState } from '@/app/store';
 import type { MenuItem, Review } from '@/types';
 import MenuCard from '@/components/MenuCard';
@@ -24,6 +25,7 @@ const RestaurantDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { user } = useAuth();
   const { latitude, longitude } = useGeolocation();
   const cartItems = useSelector((state: RootState) => state.cart.items);
 
@@ -211,10 +213,13 @@ const RestaurantDetailPage: React.FC = () => {
 
   // Check if current user is the review author
   const isCurrentUserReview = (review: Review) => {
-    // For now, we'll check if the review has a user ID that matches the current user
-    // In a real app, you'd get the current user ID from auth context
-    const currentUserId = 17; // This should come from auth context
-    return review.user?.id === currentUserId;
+    // Get the current user ID from auth context
+    const currentUserId = user?.id;
+    if (!currentUserId || !review.user?.id) {
+      return false;
+    }
+    // Compare user IDs (handle both string and number types)
+    return String(review.user.id) === String(currentUserId);
   };
 
   // Get available images for gallery

@@ -31,8 +31,12 @@ const ProfilePage: React.FC = () => {
     }
   }, [location.search]);
 
-  // Fetch user profile data with address from localStorage
+  // Get user data from AuthContext and combine with localStorage data
+  const { user } = useAuth();
   const { data: userProfile } = useUserProfileWithAddress();
+
+  // Use AuthContext user data as primary source, fallback to userProfile hook
+  const displayUser = user || userProfile;
 
   const handleLogout = () => {
     setIsLogoutClicked(true);
@@ -96,8 +100,8 @@ const ProfilePage: React.FC = () => {
                 style={{
                   width: '48px',
                   height: '48px',
-                  background: userProfile?.profilePicture
-                    ? `url(${userProfile.profilePicture})`
+                  background: displayUser?.profilePicture
+                    ? `url(${displayUser.profilePicture})`
                     : '#E5E7EB',
                   borderRadius: '50%',
                   display: 'flex',
@@ -106,9 +110,9 @@ const ProfilePage: React.FC = () => {
                   overflow: 'hidden',
                 }}
               >
-                {userProfile?.profilePicture ? (
+                {displayUser?.profilePicture ? (
                   <img
-                    src={userProfile.profilePicture}
+                    src={displayUser.profilePicture}
                     alt='Profile'
                     style={{
                       width: '100%',
@@ -129,25 +133,30 @@ const ProfilePage: React.FC = () => {
                       color: '#6B7280',
                     }}
                   >
-                    {generateInitials(userProfile?.name || 'User')}
+                    {generateInitials(displayUser?.name || 'User')}
                   </span>
                 )}
               </div>
-              {/* User Name - John Doe */}
+              {/* User Name */}
               <span
                 style={{
-                  width: '73px',
-                  height: '32px',
+                  flex: 1,
+                  minHeight: '32px',
                   fontFamily: 'Nunito',
                   fontStyle: 'normal',
                   fontWeight: 700,
-                  fontSize: '18px',
-                  lineHeight: '32px',
+                  fontSize: '16px',
+                  lineHeight: '20px',
                   letterSpacing: '-0.03em',
                   color: activeCard === 'profile' ? '#C12116' : '#0A0D12',
+                  display: 'flex',
+                  alignItems: 'center',
+                  wordBreak: 'break-word',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                 }}
               >
-                {userProfile?.name || 'John Doe'}
+                {displayUser?.name || 'User'}
               </span>
             </div>
 

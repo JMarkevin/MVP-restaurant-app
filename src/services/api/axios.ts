@@ -32,13 +32,21 @@ apiClient.interceptors.response.use(
   (error) => {
     // Handle common errors
     if (error.response?.status === 401) {
-      // Handle unauthorized - only clear token, don't redirect
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      sessionStorage.removeItem('token');
-      sessionStorage.removeItem('user');
-      // Don't redirect automatically to prevent infinite loops
-      console.warn('Unauthorized access - token cleared');
+      // Only clear token if it's a login/auth endpoint or if we're sure the token is invalid
+      const isAuthEndpoint = error.config?.url?.includes('/auth/');
+      const isLoginEndpoint = error.config?.url?.includes('/login');
+
+      // Don't clear token immediately for non-auth endpoints to prevent race conditions
+      if (isAuthEndpoint || isLoginEndpoint) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
+        console.warn('Unauthorized access - token cleared');
+      } else {
+        // For other endpoints, just log the warning but don't clear token
+        console.warn('Unauthorized access - may be temporary');
+      }
     } else if (
       error.code === 'ERR_NETWORK' ||
       error.message?.includes('CORS')

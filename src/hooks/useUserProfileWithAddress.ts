@@ -2,6 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { authApi } from '@/services/api/auth';
 
 export const useUserProfileWithAddress = () => {
+  // Check if user is authenticated by checking for token
+  const isAuthenticated =
+    typeof window !== 'undefined' &&
+    (localStorage.getItem('token') || sessionStorage.getItem('token'));
+
   const {
     data: userProfile,
     isLoading,
@@ -10,8 +15,9 @@ export const useUserProfileWithAddress = () => {
     queryKey: ['userProfile'],
     queryFn: () => authApi.getProfile(),
     select: (response) => response.data,
-    enabled: false, // Disable automatic fetching to prevent loops
+    enabled: !!isAuthenticated, // Enable when user is authenticated
     retry: false, // Don't retry on failure
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   // Get address and profile picture from localStorage
