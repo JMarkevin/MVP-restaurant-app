@@ -84,7 +84,7 @@ export function getRestaurantDistance(
 // Helper function to format distance for display
 export function formatDistance(distance: number | null): string {
   if (distance === null || distance === undefined) {
-    return 'Distance unavailable';
+    return 'N/A';
   }
   return `${distance.toFixed(1)} km`;
 }

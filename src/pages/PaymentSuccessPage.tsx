@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { Check } from 'lucide-react';
 import redLogo from '/red-logo.png';
 import type { CartItem } from '@/types';
@@ -17,6 +18,7 @@ interface OrderData {
 const PaymentSuccessPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [orderData, setOrderData] = useState<OrderData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -72,6 +74,11 @@ const PaymentSuccessPage: React.FC = () => {
   const handleSeeOrders = () => {
     // Clear stored order data when navigating away
     localStorage.removeItem('lastOrderData');
+
+    // Invalidate orders cache to ensure fresh data is fetched
+    queryClient.invalidateQueries({ queryKey: ['orders'] });
+
+    // Navigate to orders tab
     navigate('/profile?tab=orders');
   };
 

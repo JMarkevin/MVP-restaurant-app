@@ -210,7 +210,32 @@ const CategoryPage: React.FC = () => {
     // Apply rating filters
     if (filters.rating.length > 0) {
       filtered = filtered.filter((restaurant) =>
-        filters.rating.some((r) => restaurant.star >= parseFloat(r))
+        filters.rating.some((r) => {
+          const rating = parseFloat(r);
+          const restaurantRating = restaurant.star;
+
+          if (!restaurantRating) return false;
+
+          // Specific star range logic:
+          // 5 stars: exactly 5.0
+          // 4 stars: 4.0-4.9
+          // 3 stars: 3.0-3.9
+          // 2 stars: 2.0-2.9
+          // 1 star: 1.0-1.9
+          if (rating === 5) {
+            return restaurantRating >= 5.0;
+          } else if (rating === 4) {
+            return restaurantRating >= 4.0 && restaurantRating < 5.0;
+          } else if (rating === 3) {
+            return restaurantRating >= 3.0 && restaurantRating < 4.0;
+          } else if (rating === 2) {
+            return restaurantRating >= 2.0 && restaurantRating < 3.0;
+          } else if (rating === 1) {
+            return restaurantRating >= 1.0 && restaurantRating < 2.0;
+          }
+
+          return false;
+        })
       );
     }
 

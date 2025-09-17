@@ -4,7 +4,10 @@ import { useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { ordersApi } from '@/services/api/orders';
-import { useCreateReviewMutation } from '@/services/queries/reviews';
+import {
+  useCreateReviewMutation,
+  useMyReviewsQuery,
+} from '@/services/queries/reviews';
 import { useMenuImages } from '@/hooks/useMenuImages';
 import { useAuth } from '@/hooks/useAuth';
 import ReviewModal from './ReviewModal';
@@ -60,6 +63,20 @@ const OrdersCard = () => {
 
   // Review mutation
   const createReviewMutation = useCreateReviewMutation();
+
+  // Fetch user's reviews to check which restaurants have been reviewed (only when authenticated)
+  const { data: myReviewsData } = useMyReviewsQuery(
+    { page: 1, limit: 100 },
+    { enabled: isAuthenticated }
+  );
+
+  // Helper function to check if restaurant has already been reviewed
+  const hasReviewedRestaurant = (restaurantId: number) => {
+    if (!myReviewsData?.reviews) return false;
+    return myReviewsData.reviews.some(
+      (review) => Number(review.restaurant?.id) === Number(restaurantId)
+    );
+  };
 
   // Touch sliding handlers
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -561,6 +578,16 @@ const OrdersCard = () => {
                     >
                       <span className='text-base font-bold text-[#FDFDFD] font-nunito leading-7 tracking-[-0.02em]'>
                         Review Unavailable
+                      </span>
+                    </button>
+                  ) : hasReviewedRestaurant(order.restaurantId || 0) ? (
+                    <button
+                      disabled
+                      className='flex flex-row justify-center items-center p-2 gap-2 w-full md:w-[240px] h-12 bg-[#A4A7AE] rounded-full border-none cursor-not-allowed'
+                      title='You have already reviewed this restaurant'
+                    >
+                      <span className='text-base font-bold text-[#FDFDFD] font-nunito leading-7 tracking-[-0.02em]'>
+                        Already Reviewed
                       </span>
                     </button>
                   ) : (

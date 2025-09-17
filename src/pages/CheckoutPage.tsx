@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Minus, Plus } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   clearCart,
   updateQuantity,
@@ -25,6 +25,7 @@ import mandiriLogo from '/mandiri.svg';
 const CheckoutPage: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const cartItems = useSelector((state: RootState) => state.cart.items);
 
   // Fetch user profile data for address
@@ -205,6 +206,9 @@ const CheckoutPage: React.FC = () => {
 
       // Clear cart
       dispatch(clearCart());
+
+      // Invalidate orders cache to ensure fresh data when user navigates to orders
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
 
       // Navigate to success page with order data
       navigate('/success', { state: orderData });

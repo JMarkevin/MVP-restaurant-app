@@ -23,11 +23,15 @@ export function useRestaurantReviewsQuery(
 }
 
 // Get current user's reviews
-export function useMyReviewsQuery(params?: { page?: number; limit?: number }) {
+export function useMyReviewsQuery(
+  params?: { page?: number; limit?: number },
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: ['my-reviews', params],
     queryFn: () => reviewsApi.getMyReviews(params),
     staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: options?.enabled !== false, // Default to true unless explicitly disabled
   });
 }
 
