@@ -84,7 +84,14 @@ const CategoryPage: React.FC = () => {
     }
   }, [urlFilter, category, dispatch]);
 
-  // Fetch restaurants with pagination
+  // Check if any filters are active
+  const hasActiveFilters =
+    filters.distance.length > 0 ||
+    !!filters.priceMin ||
+    !!filters.priceMax ||
+    filters.rating.length > 0;
+
+  // Fetch restaurants with pagination (normal browsing)
   const {
     data: restaurantsData,
     isLoading,
@@ -106,12 +113,52 @@ const CategoryPage: React.FC = () => {
     },
     staleTime: 10 * 60 * 1000, // 10 minutes - increased cache time
     gcTime: 15 * 60 * 1000, // 15 minutes - keep in cache longer
-    enabled: hasMore,
+    enabled: hasMore && !hasActiveFilters, // Disable when filters are active
+  });
+
+  // Fetch comprehensive data when filters are applied
+  const { data: filterResults, isLoading: isFilterLoading } = useQuery({
+    queryKey: ['restaurants-filter', category, filters, latitude, longitude],
+    queryFn: async () => {
+      const allFilterResults: Restaurant[] = [];
+
+      // Load multiple pages to get more restaurants for filtering
+      for (let page = 1; page <= 5; page++) {
+        try {
+          const result = await restaurantsApi.getRestaurants({
+            page: page,
+            limit: 12, // Use same limit as normal pagination
+            location:
+              latitude && longitude ? `${latitude},${longitude}` : undefined,
+          });
+
+          if (result.length === 0) break; // No more results
+
+          allFilterResults.push(...result);
+
+          // If we got less than 12, we've reached the end
+          if (result.length < 12) break;
+        } catch {
+          break; // Stop on error
+        }
+      }
+
+      return allFilterResults;
+    },
+    enabled: hasActiveFilters && !!category,
+    staleTime: 10 * 60 * 1000, // 10 minutes cache for filter results
   });
 
   // Update restaurants when new data arrives
   useEffect(() => {
-    if (restaurantsData) {
+    if (hasActiveFilters && filterResults && Array.isArray(filterResults)) {
+      // When filters are active, use filter results
+      setAllRestaurants(filterResults);
+      setHasMore(false); // No pagination when filtering
+      setIsLoadingMore(false);
+      setIsInitialLoading(false);
+    } else if (restaurantsData && !hasActiveFilters) {
+      // Normal pagination when no filters
       if (currentPage === 1) {
         // First page - replace all restaurants
         setAllRestaurants(restaurantsData.restaurants);
@@ -129,7 +176,7 @@ const CategoryPage: React.FC = () => {
       setIsLoadingMore(false);
       setIsInitialLoading(false);
     }
-  }, [restaurantsData, currentPage]);
+  }, [restaurantsData, filterResults, currentPage, hasActiveFilters]);
 
   // Load more restaurants
   const loadMore = useCallback(() => {
@@ -315,9 +362,12 @@ const CategoryPage: React.FC = () => {
 
           {/* Mobile Restaurant Cards - Frame 115 */}
           <div className='flex flex-col items-start px-0 gap-4 w-full'>
-            {isInitialLoading ? (
+            {isInitialLoading || (hasActiveFilters && isFilterLoading) ? (
               <div className='flex justify-center items-center py-16 w-full'>
                 <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-red-600'></div>
+                {hasActiveFilters && isFilterLoading && (
+                  <p className='ml-4 text-gray-600'>Applying filters...</p>
+                )}
               </div>
             ) : error ? (
               <div className='text-center py-16 w-full'>
@@ -556,9 +606,12 @@ const CategoryPage: React.FC = () => {
 
             {/* Right Content - Restaurant Grid */}
             <div className='flex-1'>
-              {isInitialLoading ? (
+              {isInitialLoading || (hasActiveFilters && isFilterLoading) ? (
                 <div className='flex justify-center items-center py-16'>
                   <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-red-600'></div>
+                  {hasActiveFilters && isFilterLoading && (
+                    <p className='ml-4 text-gray-600'>Applying filters...</p>
+                  )}
                 </div>
               ) : error ? (
                 <div className='text-center py-16'>

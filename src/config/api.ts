@@ -1,7 +1,6 @@
 // API Configuration
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  'https://berestaurantappformentee-production.up.railway.app';
+  import.meta.env.VITE_API_BASE_URL || 'https://foody-api-xi.vercel.app';
 
 export const API_CONFIG = {
   BASE_URL: API_BASE_URL,

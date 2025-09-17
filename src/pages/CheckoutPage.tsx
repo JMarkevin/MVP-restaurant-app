@@ -295,10 +295,10 @@ const CheckoutPage: React.FC = () => {
                           const parent = target.parentElement;
                           if (parent) {
                             parent.innerHTML = `
-                              <div class="w-6 h-6 bg-red-600 rounded flex items-center justify-center">
-                                <span class="text-white text-xs font-bold">L</span>
-                              </div>
-                            `;
+                            <div class="w-6 h-6 bg-red-600 rounded flex items-center justify-center">
+                              <span class="text-white text-xs font-bold">L</span>
+                            </div>
+                          `;
                           }
                         }}
                       />
@@ -428,9 +428,9 @@ const CheckoutPage: React.FC = () => {
                                 if (parent) {
                                   parent.innerHTML = `
                                     <div class="w-full h-full bg-gray-200 rounded-xl flex items-center justify-center">
-                                      <span class="text-gray-400 text-xs">No Image</span>
-                                    </div>
-                                  `;
+                                        <span class="text-gray-400 text-xs">No Image</span>
+                                      </div>
+                                    `;
                                 }
                               }}
                             />

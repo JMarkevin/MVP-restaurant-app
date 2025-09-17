@@ -56,6 +56,41 @@ const HomePage: React.FC = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Search restaurants - load multiple pages for comprehensive search
+  const { data: searchResults, isLoading: isSearching } = useQuery({
+    queryKey: ['restaurants-search', searchQuery, latitude, longitude],
+    queryFn: async () => {
+      if (!searchQuery.trim()) return [];
+
+      const allSearchResults: Restaurant[] = [];
+
+      // Load multiple pages to get more restaurants for search
+      for (let page = 1; page <= 5; page++) {
+        try {
+          const result = await restaurantsApi.getRestaurants({
+            page: page,
+            limit: 12, // Use same limit as normal pagination
+            location:
+              latitude && longitude ? `${latitude},${longitude}` : undefined,
+          });
+
+          if (result.length === 0) break; // No more results
+
+          allSearchResults.push(...result);
+
+          // If we got less than 12, we've reached the end
+          if (result.length < 12) break;
+        } catch {
+          break; // Stop on error
+        }
+      }
+
+      return allSearchResults;
+    },
+    enabled: !!searchQuery.trim() && shouldFetch,
+    staleTime: 5 * 60 * 1000, // 5 minutes cache for search results
+  });
+
   // Fetch restaurants with pagination
   const {
     data: restaurantsData,
@@ -182,16 +217,30 @@ const HomePage: React.FC = () => {
 
   // Filter restaurants based on search query and category
   const filteredRestaurants = useMemo(() => {
-    let filtered = allRestaurants;
-
-    // Apply search filter
+    // When searching, use search results; otherwise use paginated restaurants
     if (searchQuery.trim()) {
-      filtered = filtered.filter(
-        (restaurant) =>
-          restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          restaurant.place.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      if (searchResults && searchResults.length > 0) {
+        // Use search results and apply search filter
+        return searchResults.filter(
+          (restaurant) =>
+            restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            restaurant.place.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      } else if (!isSearching) {
+        // Fallback: search in loaded restaurants if search API didn't return results
+        return allRestaurants.filter(
+          (restaurant) =>
+            restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            restaurant.place.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      } else {
+        // Still searching, return empty array
+        return [];
+      }
     }
+
+    // No search query - use normal pagination logic
+    let filtered = allRestaurants;
 
     // Apply category filter (only if a specific category is selected)
     // If selectedCategory is null (All Restaurant), show all restaurants without filtering
@@ -233,7 +282,15 @@ const HomePage: React.FC = () => {
     }
 
     return filtered;
-  }, [allRestaurants, searchQuery, selectedCategory, latitude, longitude]);
+  }, [
+    allRestaurants,
+    searchResults,
+    searchQuery,
+    selectedCategory,
+    latitude,
+    longitude,
+    isSearching,
+  ]);
 
   return (
     <div className='bg-white font-nunito'>
@@ -377,9 +434,12 @@ const HomePage: React.FC = () => {
           </div>
 
           {/* Loading State */}
-          {isInitialLoading && (
+          {(isInitialLoading || (searchQuery.trim() && isSearching)) && (
             <div className='flex justify-center items-center py-16'>
               <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500'></div>
+              {searchQuery.trim() && isSearching && (
+                <p className='ml-4 text-gray-600'>Searching restaurants...</p>
+              )}
             </div>
           )}
 
@@ -393,61 +453,76 @@ const HomePage: React.FC = () => {
           )}
 
           {/* No Results */}
-          {!isInitialLoading && !error && filteredRestaurants.length === 0 && (
-            <div className='text-center py-16'>
-              <p className='text-gray-600 text-lg'>
-                {searchQuery
-                  ? 'No restaurants found matching your search.'
-                  : 'No recommended restaurants available.'}
-              </p>
-            </div>
-          )}
+          {!isInitialLoading &&
+            !error &&
+            !(searchQuery.trim() && isSearching) &&
+            filteredRestaurants.length === 0 && (
+              <div className='text-center py-16'>
+                <p className='text-gray-600 text-lg'>
+                  {searchQuery
+                    ? 'No restaurants found matching your search.'
+                    : 'No recommended restaurants available.'}
+                </p>
+              </div>
+            )}
 
           {/* Restaurant Grid */}
-          {!isInitialLoading && !error && filteredRestaurants.length > 0 && (
-            <>
-              <div className='flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-5 mb-8'>
-                {filteredRestaurants
-                  .slice(
-                    0,
-                    isMobile ? mobileDisplayCount : filteredRestaurants.length
-                  )
-                  .map((restaurant, index) => (
-                    <RestaurantCard
-                      key={`${restaurant.id}-${index}`}
-                      restaurant={restaurant}
-                      userLocation={
-                        latitude && longitude ? { latitude, longitude } : null
-                      }
-                    />
-                  ))}
-              </div>
-
-              {/* Show More Button */}
-              <ShowMoreButton
-                isExpanded={false}
-                onToggle={loadMore}
-                showButton={
-                  hasMore &&
-                  allRestaurants.length > 0 &&
-                  (!isMobile || mobileDisplayCount < filteredRestaurants.length)
-                }
-                expandedText='Show More'
-                collapsedText='Show More'
-                disabled={isLoadingMore}
-                className='py-8'
-              />
-
-              {/* End of results indicator */}
-              {!hasMore && allRestaurants.length > 0 && (
-                <div className='text-center py-8'>
-                  <p className='text-gray-500 text-sm'>
-                    You've reached the end of the list
-                  </p>
+          {!isInitialLoading &&
+            !error &&
+            !(searchQuery.trim() && isSearching) &&
+            filteredRestaurants.length > 0 && (
+              <>
+                <div className='flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-5 mb-8'>
+                  {filteredRestaurants
+                    .slice(
+                      0,
+                      searchQuery.trim()
+                        ? filteredRestaurants.length // Show all search results
+                        : isMobile
+                        ? mobileDisplayCount
+                        : filteredRestaurants.length
+                    )
+                    .map((restaurant, index) => (
+                      <RestaurantCard
+                        key={`${restaurant.id}-${index}`}
+                        restaurant={restaurant}
+                        userLocation={
+                          latitude && longitude ? { latitude, longitude } : null
+                        }
+                      />
+                    ))}
                 </div>
-              )}
-            </>
-          )}
+
+                {/* Show More Button - Only show when not searching */}
+                {!searchQuery.trim() && (
+                  <ShowMoreButton
+                    isExpanded={false}
+                    onToggle={loadMore}
+                    showButton={
+                      hasMore &&
+                      allRestaurants.length > 0 &&
+                      (!isMobile ||
+                        mobileDisplayCount < filteredRestaurants.length)
+                    }
+                    expandedText='Show More'
+                    collapsedText='Show More'
+                    disabled={isLoadingMore}
+                    className='py-8'
+                  />
+                )}
+
+                {/* End of results indicator - Only show when not searching */}
+                {!searchQuery.trim() &&
+                  !hasMore &&
+                  allRestaurants.length > 0 && (
+                    <div className='text-center py-8'>
+                      <p className='text-gray-500 text-sm'>
+                        You've reached the end of the list
+                      </p>
+                    </div>
+                  )}
+              </>
+            )}
         </div>
       </div>
 
