@@ -39,8 +39,7 @@ export function useCreateReviewMutation() {
     mutationFn: (data: CreateReviewRequest) => {
       return reviewsApi.createReview(data);
     },
-    onSuccess: (data, variables) => {
-      console.log('Review created successfully:', data);
+    onSuccess: (_, variables) => {
       // Invalidate and refetch restaurant reviews
       queryClient.invalidateQueries({
         queryKey: ['restaurant-reviews', variables.restaurantId],
@@ -69,8 +68,7 @@ export function useUpdateReviewMutation() {
       reviewId: number;
       data: UpdateReviewRequest;
     }) => reviewsApi.updateReview(reviewId, data),
-    onSuccess: (data) => {
-      console.log('Review updated successfully:', data);
+    onSuccess: () => {
       // Invalidate and refetch my reviews
       queryClient.invalidateQueries({
         queryKey: ['my-reviews'],
@@ -93,8 +91,7 @@ export function useDeleteReviewMutation() {
 
   return useMutation({
     mutationFn: (reviewId: number) => reviewsApi.deleteReview(reviewId),
-    onSuccess: (data) => {
-      console.log('Review deleted successfully:', data);
+    onSuccess: () => {
       // Invalidate and refetch my reviews
       queryClient.invalidateQueries({
         queryKey: ['my-reviews'],

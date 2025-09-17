@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import redLogo from '/red-logo.png';
 import facebookIcon from '/facebook-icon.svg';
 import instagramIcon from '/instagram-icon.svg';
@@ -6,14 +7,43 @@ import linkedinIcon from '/linkedin-icon.svg';
 import tiktokIcon from '/tiktok-icon.svg';
 
 interface FooterProps {
+  // Props kept for backward compatibility but not used
   onCategoryClick?: (category: string) => void;
   onScrollToCategories?: () => void;
 }
 
-const Footer: React.FC<FooterProps> = ({
-  onCategoryClick,
-  onScrollToCategories,
-}) => {
+const Footer: React.FC<FooterProps> = () => {
+  const navigate = useNavigate();
+
+  const handleCategoryClick = (filter: string | null) => {
+    if (filter === null || filter === 'all') {
+      // "All Food" goes to /category/all
+      navigate('/category/all');
+    } else {
+      // Other categories go to /category/all with filter parameter
+      navigate(`/category/all?filter=${filter}`);
+    }
+  };
+
+  const handleHelpClick = (helpItem: string) => {
+    switch (helpItem) {
+      case 'How to Order':
+        navigate('/category/all');
+        break;
+      case 'Payment Methods':
+        navigate('/checkout');
+        break;
+      case 'Track My Order':
+        navigate('/profile?tab=orders');
+        break;
+      case 'FAQ':
+      case 'Contact Us':
+        // Leave as is - no navigation
+        break;
+      default:
+        break;
+    }
+  };
   return (
     <footer className='bg-[#0A0D12] text-white py-10 md:py-20 px-4 md:px-30'>
       <div className='max-w-[393px] md:max-w-6xl mx-auto'>
@@ -134,14 +164,7 @@ const Footer: React.FC<FooterProps> = ({
                 ].map((item) => (
                   <button
                     key={item.name}
-                    onClick={() => {
-                      if (onCategoryClick) {
-                        onCategoryClick(item.filter || 'all');
-                      }
-                      if (onScrollToCategories) {
-                        onScrollToCategories();
-                      }
-                    }}
+                    onClick={() => handleCategoryClick(item.filter)}
                     className='block text-sm md:text-md-regular text-[#FDFDFD] hover:text-white text-left transition-colors font-nunito font-normal leading-7 tracking-[-0.02em]'
                   >
                     {item.name}
@@ -162,15 +185,31 @@ const Footer: React.FC<FooterProps> = ({
                   'Track My Order',
                   'FAQ',
                   'Contact Us',
-                ].map((item) => (
-                  <a
-                    key={item}
-                    href='#'
-                    className='block text-sm md:text-md-regular text-[#FDFDFD] hover:text-white font-nunito font-normal leading-7 tracking-[-0.02em]'
-                  >
-                    {item}
-                  </a>
-                ))}
+                ].map((item) => {
+                  const isNavigable = [
+                    'How to Order',
+                    'Payment Methods',
+                    'Track My Order',
+                  ].includes(item);
+
+                  return isNavigable ? (
+                    <button
+                      key={item}
+                      onClick={() => handleHelpClick(item)}
+                      className='block text-sm md:text-md-regular text-[#FDFDFD] hover:text-white text-left transition-colors font-nunito font-normal leading-7 tracking-[-0.02em]'
+                    >
+                      {item}
+                    </button>
+                  ) : (
+                    <a
+                      key={item}
+                      href='#'
+                      className='block text-sm md:text-md-regular text-[#FDFDFD] hover:text-white font-nunito font-normal leading-7 tracking-[-0.02em]'
+                    >
+                      {item}
+                    </a>
+                  );
+                })}
               </div>
             </div>
           </div>

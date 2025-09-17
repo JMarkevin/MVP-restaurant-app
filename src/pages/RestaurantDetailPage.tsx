@@ -469,13 +469,13 @@ const RestaurantDetailPage: React.FC = () => {
           {/* Mobile: Frame 108 Layout */}
           <div className='md:hidden'>
             <div
-              className='flex flex-row justify-between items-center px-0 gap-[60px]'
-              style={{ width: '361px', height: '90px' }}
+              className='flex flex-row justify-between items-start px-0 gap-[60px]'
+              style={{ width: '361px', minHeight: '90px' }}
             >
               {/* Frame 107 - Centered Content */}
               <div
-                className='flex flex-row items-center px-0 gap-2 mx-auto'
-                style={{ width: '246px', height: '90px' }}
+                className='flex flex-row items-start px-0 gap-2 mx-auto'
+                style={{ width: '246px', minHeight: '90px' }}
               >
                 {/* Restaurant Logo - Rectangle 3 */}
                 <div
@@ -496,16 +496,16 @@ const RestaurantDetailPage: React.FC = () => {
                 {/* Frame 2 - Restaurant Details */}
                 <div
                   className='flex flex-col items-start px-0 gap-0.5 flex-none order-1 flex-grow-0'
-                  style={{ width: '148px', height: '90px' }}
+                  style={{ width: '148px', minHeight: '90px' }}
                 >
                   {/* Restaurant Name - Burger King */}
                   <h1
-                    className='font-nunito font-extrabold text-[#0A0D12] leading-[30px] flex-none order-0 self-stretch flex-grow-0'
+                    className='font-nunito font-extrabold text-[#0A0D12] leading-[20px] flex-none order-0 self-stretch flex-grow-0 break-words'
                     style={{
                       fontSize: '16px',
                       width: '148px',
-                      height: '30px',
-                      lineHeight: '30px',
+                      minHeight: '20px',
+                      lineHeight: '20px',
                     }}
                   >
                     {restaurant.name}
@@ -513,7 +513,7 @@ const RestaurantDetailPage: React.FC = () => {
 
                   {/* Frame 1 - Rating Row */}
                   <div
-                    className='flex flex-row items-center px-0 gap-1 flex-none order-1 self-stretch flex-grow-0'
+                    className='flex flex-row items-center px-0 gap-1 flex-none order-1 self-stretch flex-grow-0 mt-1'
                     style={{ width: '148px', height: '28px' }}
                   >
                     {/* Star Icon */}

@@ -28,6 +28,7 @@ const HomePage: React.FC = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [mobileDisplayCount, setMobileDisplayCount] = useState(5);
 
   // Get user's location for distance calculation
   const { latitude, longitude, error: locationError } = useGeolocation();
@@ -86,6 +87,7 @@ const HomePage: React.FC = () => {
       if (currentPage === 1) {
         // First page - replace all restaurants
         setAllRestaurants(restaurantsData.restaurants);
+        setMobileDisplayCount(5); // Reset mobile display count
       } else {
         // Subsequent pages - append to existing restaurants, avoiding duplicates
         setAllRestaurants((prev) => {
@@ -93,10 +95,19 @@ const HomePage: React.FC = () => {
           const newRestaurants = restaurantsData.restaurants.filter(
             (r) => !existingIds.has(r.id)
           );
+
+          // If no new restaurants, it might be because the API returned duplicates
+          // In this case, we should still update hasMore to false to stop pagination
+          if (newRestaurants.length === 0) {
+            // Set hasMore to false to stop pagination
+            setHasMore(false);
+          }
+
           return [...prev, ...newRestaurants];
         });
       }
       setHasMore(restaurantsData.hasMore);
+
       setIsLoadingMore(false);
       setIsInitialLoading(false);
     }
@@ -107,8 +118,13 @@ const HomePage: React.FC = () => {
     if (!isLoadingMore && hasMore && !isLoading) {
       setIsLoadingMore(true);
       setCurrentPage((prev) => prev + 1);
+
+      // On mobile, increase the display count to show more restaurants
+      if (isMobile) {
+        setMobileDisplayCount((prev) => prev + 5);
+      }
     }
-  }, [isLoadingMore, hasMore, isLoading]);
+  }, [isLoadingMore, hasMore, isLoading, isMobile]);
 
   // Fetch categories from API
   const {
@@ -392,7 +408,10 @@ const HomePage: React.FC = () => {
             <>
               <div className='flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-5 mb-8'>
                 {filteredRestaurants
-                  .slice(0, isMobile ? 5 : filteredRestaurants.length)
+                  .slice(
+                    0,
+                    isMobile ? mobileDisplayCount : filteredRestaurants.length
+                  )
                   .map((restaurant, index) => (
                     <RestaurantCard
                       key={`${restaurant.id}-${index}`}
@@ -411,7 +430,7 @@ const HomePage: React.FC = () => {
                 showButton={
                   hasMore &&
                   allRestaurants.length > 0 &&
-                  (!isMobile || filteredRestaurants.length > 5)
+                  (!isMobile || mobileDisplayCount < filteredRestaurants.length)
                 }
                 expandedText='Show More'
                 collapsedText='Show More'

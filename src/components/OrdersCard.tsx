@@ -115,12 +115,21 @@ const OrdersCard = () => {
 
   const handleSubmitReview = async (rating: number, comment: string) => {
     if (!selectedOrder || !selectedOrder.restaurantId) {
+      console.error('Missing order data:', { selectedOrder });
+      alert('Unable to submit review: Missing order information');
       return;
     }
 
     try {
-      // Use the actual transaction ID from the order
+      // Ensure we have a valid transaction ID
       const transactionId = selectedOrder.transactionId || selectedOrder.id;
+
+      if (!transactionId) {
+        console.error('Missing transaction ID:', { selectedOrder });
+        alert('Unable to submit review: Missing transaction ID');
+        return;
+      }
+
 
       const reviewData = {
         transactionId: transactionId,
@@ -132,10 +141,19 @@ const OrdersCard = () => {
       await createReviewMutation.mutateAsync(reviewData);
       handleCloseReviewModal();
     } catch (error) {
-      // Check if it's a "already reviewed" error
+      // Enhanced error handling
       const axiosError = error as {
-        response?: { status?: number; data?: { message?: string } };
+        response?: {
+          status?: number;
+          data?: { message?: string; error?: string; details?: string };
+        };
       };
+
+      console.error('Review submission error:', {
+        error,
+        response: axiosError.response,
+        selectedOrder,
+      });
 
       if (
         axiosError.response?.status === 409 ||
@@ -144,32 +162,78 @@ const OrdersCard = () => {
         alert('You have already reviewed this restaurant!');
       } else if (
         axiosError.response?.status === 400 &&
-        axiosError.response?.data?.message?.includes(
+        (axiosError.response?.data?.message?.includes(
           'only review restaurants you have ordered from'
-        )
+        ) ||
+          axiosError.response?.data?.message?.includes('Transaction not found'))
       ) {
         alert('You can only review restaurants you have ordered from!');
-      } else {
+      } else if (axiosError.response?.status === 401) {
+        alert('Please log in to submit a review');
+      } else if (
+        axiosError.response?.status === 404 ||
+        axiosError.response?.data?.message?.includes('Transaction not found') ||
+        axiosError.response?.data?.message?.includes('does not belong to you')
+      ) {
         alert(
-          `Failed to submit review: ${
-            axiosError.response?.data?.message || 'Unknown error'
-          }`
+          'This order was not found or does not belong to you. Please try refreshing the page.'
         );
+      } else {
+        const errorMessage =
+          axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          axiosError.response?.data?.details ||
+          'Unknown error occurred';
+        alert(`Failed to submit review: ${errorMessage}`);
       }
     }
   };
 
-  // Use Redux orders (contains actual checkout data with images) or fallback to API
+  // Prioritize API orders over Redux orders for reviews (API orders have valid transaction IDs)
   const mappedOrders =
-    reduxOrders.length > 0
+    ordersData?.data.orders.map((apiOrder) => {
+      const firstRestaurant = apiOrder.restaurants[0];
+      const restaurantId = Number(firstRestaurant?.restaurantId) || 1;
+      return {
+        id: apiOrder.id.toString(),
+        transactionId: apiOrder.transactionId, // Use actual transaction ID from API
+        restaurantName: firstRestaurant?.restaurantName || 'Restaurant',
+        restaurantId: restaurantId, // Convert to number, default to 1 if not available
+        restaurantLogo: '', // API doesn't provide logo in this structure
+        status: apiOrder.status,
+        items:
+          firstRestaurant?.items.map((item) => {
+            return {
+              id: item.menuId.toString(),
+              name: item.menuName,
+              quantity: item.quantity,
+              price: item.price,
+              image:
+                (item as { image?: string }).image ||
+                menuImages[item.menuId.toString()] ||
+                `data:image/svg+xml;base64,${btoa(
+                  `<svg width="80" height="80" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="80" fill="#F3F4F6"/><text x="40" y="45" text-anchor="middle" font-family="Arial" font-size="24" fill="#6B7280">${item.menuName
+                    .charAt(0)
+                    .toUpperCase()}</text></svg>`
+                )}`, // Use API image, fetched menu image, or SVG placeholder
+            };
+          }) || [],
+        total: apiOrder.pricing.totalPrice,
+        orderDate: apiOrder.createdAt,
+      };
+    }) || [];
+
+  // If no API orders but have Redux orders, map them but mark them as non-reviewable
+  const fallbackReduxOrders =
+    mappedOrders.length === 0 && reduxOrders.length > 0
       ? reduxOrders.map((order: Order) => {
           const restaurantId = Number(order.restaurantId) || 1;
           return {
             id: order.id,
-            transactionId: order.id, // Use order ID as transaction ID for Redux orders
+            transactionId: undefined, // No valid transaction ID for local orders
             restaurantName: order.restaurantName || 'Restaurant',
-            restaurantId: restaurantId, // Convert to number, default to 1 if not available
-            restaurantLogo: '', // Will use restaurant icon
+            restaurantId: restaurantId,
+            restaurantLogo: '',
             status: order.status || 'done',
             items: order.items.map((item) => ({
               id: item.id,
@@ -182,46 +246,20 @@ const OrdersCard = () => {
                   `<svg width="80" height="80" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="80" fill="#F3F4F6"/><text x="40" y="45" text-anchor="middle" font-family="Arial" font-size="24" fill="#6B7280">${item.name
                     .charAt(0)
                     .toUpperCase()}</text></svg>`
-                )}`, // Use actual checkout image or SVG placeholder
+                )}`,
             })),
             total: order.totalAmount,
             orderDate: order.orderDate || new Date().toISOString(),
+            isLocalOrder: true, // Flag to indicate this is a local order
           };
         })
-      : ordersData?.data.orders.map((apiOrder) => {
-          const firstRestaurant = apiOrder.restaurants[0];
-          const restaurantId = Number(firstRestaurant?.restaurantId) || 1;
-          return {
-            id: apiOrder.id.toString(),
-            transactionId: apiOrder.transactionId, // Add transactionId from API
-            restaurantName: firstRestaurant?.restaurantName || 'Restaurant',
-            restaurantId: restaurantId, // Convert to number, default to 1 if not available
-            restaurantLogo: '', // API doesn't provide logo in this structure
-            status: apiOrder.status,
-            items:
-              firstRestaurant?.items.map((item) => {
-                return {
-                  id: item.menuId.toString(),
-                  name: item.menuName,
-                  quantity: item.quantity,
-                  price: item.price,
-                  image:
-                    (item as { image?: string }).image ||
-                    menuImages[item.menuId.toString()] ||
-                    `data:image/svg+xml;base64,${btoa(
-                      `<svg width="80" height="80" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="80" fill="#F3F4F6"/><text x="40" y="45" text-anchor="middle" font-family="Arial" font-size="24" fill="#6B7280">${item.menuName
-                        .charAt(0)
-                        .toUpperCase()}</text></svg>`
-                    )}`, // Use API image, fetched menu image, or SVG placeholder
-                };
-              }) || [],
-            total: apiOrder.pricing.totalPrice,
-            orderDate: apiOrder.createdAt,
-          };
-        }) || [];
+      : [];
+
+  // Combine API orders with fallback Redux orders
+  const allMappedOrders = [...mappedOrders, ...fallbackReduxOrders];
 
   // Filter orders by search
-  const filteredOrders = mappedOrders.filter((order) => {
+  const filteredOrders = allMappedOrders.filter((order) => {
     const matchesSearch =
       order.restaurantName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.items.some((item) =>
@@ -239,7 +277,7 @@ const OrdersCard = () => {
     }).format(price);
   };
 
-  // Use orders from API
+  // Use filtered orders
   const displayOrders = filteredOrders;
 
   const statusFilters = [
@@ -274,7 +312,7 @@ const OrdersCard = () => {
         {/* Status Filters - Container */}
         <div
           ref={statusContainerRef}
-          className={`flex flex-row items-center p-0 gap-3 w-full max-w-[329px] md:max-w-[598px] h-14 overflow-hidden ${
+          className={`flex flex-row items-center p-0 gap-3 w-full max-w-[329px] md:max-w-[620px] h-16 md:h-44 overflow-hidden ${
             isDragging ? 'cursor-grabbing' : 'cursor-grab'
           }`}
           onMouseDown={handleMouseDown}
@@ -300,7 +338,7 @@ const OrdersCard = () => {
                   setStatusFilter(filter.key);
                 }
               }}
-              className={`flex flex-row justify-center items-center px-4 py-2 gap-2 h-10 min-w-fit whitespace-nowrap rounded-full transition-all duration-200 flex-shrink-0 ${
+              className={`flex flex-row justify-center items-center px-4 py-2 gap-2 h-8 md:h-10 min-w-fit whitespace-nowrap rounded-full transition-all duration-200 flex-shrink-0 ${
                 isDragging ? 'cursor-grabbing' : 'cursor-pointer'
               } ${
                 statusFilter === filter.key
@@ -505,14 +543,26 @@ const OrdersCard = () => {
                   </div>
 
                   {/* Give Review Button */}
-                  <button
-                    onClick={() => handleOpenReviewModal(order)}
-                    className='flex flex-row justify-center items-center p-2 gap-2 w-full md:w-[240px] h-12 bg-[#C12116] rounded-full border-none cursor-pointer hover:bg-[#B01E14] transition-colors'
-                  >
-                    <span className='text-base font-bold text-[#FDFDFD] font-nunito leading-7 tracking-[-0.02em]'>
-                      Give Review
-                    </span>
-                  </button>
+                  {(order as { isLocalOrder?: boolean }).isLocalOrder ? (
+                    <button
+                      disabled
+                      className='flex flex-row justify-center items-center p-2 gap-2 w-full md:w-[240px] h-12 bg-[#A4A7AE] rounded-full border-none cursor-not-allowed'
+                      title='Reviews are only available for completed orders'
+                    >
+                      <span className='text-base font-bold text-[#FDFDFD] font-nunito leading-7 tracking-[-0.02em]'>
+                        Review Unavailable
+                      </span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleOpenReviewModal(order)}
+                      className='flex flex-row justify-center items-center p-2 gap-2 w-full md:w-[240px] h-12 bg-[#C12116] rounded-full border-none cursor-pointer hover:bg-[#B01E14] transition-colors'
+                    >
+                      <span className='text-base font-bold text-[#FDFDFD] font-nunito leading-7 tracking-[-0.02em]'>
+                        Give Review
+                      </span>
+                    </button>
+                  )}
                 </div>
               </div>
             ))

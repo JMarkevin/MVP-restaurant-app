@@ -27,7 +27,6 @@ const MobileProfileSidebar: React.FC<MobileProfileSidebarProps> = ({
   const handleNavigateToProfile = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Navigating to profile page...');
     // Navigate to profile page with explicit tab parameter to ensure profile card is shown
     navigate('/profile?tab=profile');
     onClose();
@@ -65,7 +64,6 @@ const MobileProfileSidebar: React.FC<MobileProfileSidebarProps> = ({
             className='flex items-center gap-2 w-[165px] h-9 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors select-none'
             onClick={handleNavigateToProfile}
             onMouseDown={(e) => {
-              console.log('Profile area clicked');
               e.preventDefault();
             }}
             style={{ minHeight: '36px' }}
